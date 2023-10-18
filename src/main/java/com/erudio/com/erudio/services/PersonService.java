@@ -29,7 +29,7 @@ public class PersonService {
 	}
 	public Person update(Long id,Person newPerson) {
 		findById(id);
-		return insert(newPerson);
+		return repository.save(newPerson);
 	}
 
 }
