@@ -1,13 +1,13 @@
 package com.erudio.com.erudio.services;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.erudio.com.erudio.data.vo.v1.PersonVO;
+import com.erudio.com.erudio.data.vo.v2.PersonVOV2;
 import com.erudio.com.erudio.entities.Person;
 import com.erudio.com.erudio.repositories.PersonRepository;
 
@@ -29,6 +29,10 @@ public class PersonService {
 		return person;
 	}
 	public Person insert(Person person) {
+		return repository.save(person);
+	}
+	public Person insertV2(PersonVOV2 personv2) {
+		Person person=mapper.map(personv2, Person.class);
 		return repository.save(person);
 	}
 	public void delete(Long id) {

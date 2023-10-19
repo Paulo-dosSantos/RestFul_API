@@ -1,8 +1,6 @@
 package com.erudio.com.erudio.resources;
-
 import java.util.List;
 import java.util.stream.Collectors;
-
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -14,8 +12,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
+import com.erudio.com.erudio.config.custom.PersonMapper;
 import com.erudio.com.erudio.data.vo.v1.PersonVO;
+import com.erudio.com.erudio.data.vo.v2.PersonVOV2;
 import com.erudio.com.erudio.entities.Person;
 import com.erudio.com.erudio.services.PersonService;
 
@@ -28,6 +27,9 @@ public class PersonResource {
 	
 	@Autowired
 	private ModelMapper mapper;
+	
+	@Autowired
+	private PersonMapper personMapper;
 	
 	@GetMapping
 	public ResponseEntity<List<PersonVO>>findAll(){
@@ -51,6 +53,11 @@ public class PersonResource {
 	public ResponseEntity<Person>insert(@RequestBody Person person){
 		person=service.insert(person);
 		return ResponseEntity.ok().body(person);
+	}
+	@PostMapping(value="/v2")
+	public ResponseEntity<PersonVOV2>insertV2(@RequestBody PersonVOV2 person){
+		Person entity= service.insertV2(person);
+		return ResponseEntity.ok().body(personMapper.convertEntityToVO(entity));
 	}
 	@PutMapping(value="/{id}")
 	public ResponseEntity<PersonVO>update(@PathVariable Long id,@RequestBody PersonVO person){
