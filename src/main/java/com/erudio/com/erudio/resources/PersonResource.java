@@ -1,7 +1,9 @@
 package com.erudio.com.erudio.resources;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.erudio.com.erudio.data.vo.v1.PersonVO;
 import com.erudio.com.erudio.entities.Person;
 import com.erudio.com.erudio.services.PersonService;
 
@@ -23,15 +26,19 @@ public class PersonResource {
 	@Autowired
 	private PersonService service;
 	
+	@Autowired
+	private ModelMapper mapper;
+	
 	@GetMapping
-	public ResponseEntity<List<Person>>findAll(){
-		return ResponseEntity.ok().body(service.findAll());
+	public ResponseEntity<List<PersonVO>>findAll(){
+		List<PersonVO>list=service.findAll().stream().map(x->mapper.map(x, PersonVO.class)).collect(Collectors.toList());
+		
+		return ResponseEntity.ok().body(list);
 		
 	}
 	@GetMapping(value="/{id}")
-	public ResponseEntity<Person>findById(@PathVariable Long id){
-		Person person=service.findById(id);
-		
+	public ResponseEntity<PersonVO>findById(@PathVariable Long id){
+		PersonVO person=mapper.map(service.findById(id), PersonVO.class);
 		return ResponseEntity.ok().body(person);
 	}
 	@DeleteMapping(value="/{id}")
@@ -43,13 +50,12 @@ public class PersonResource {
 	@PostMapping
 	public ResponseEntity<Person>insert(@RequestBody Person person){
 		person=service.insert(person);
-		
 		return ResponseEntity.ok().body(person);
 	}
 	@PutMapping(value="/{id}")
-	public ResponseEntity<Person>update(@PathVariable Long id,@RequestBody Person person){
-		Person newPerson=service.update(id, person);
-		
+	public ResponseEntity<PersonVO>update(@PathVariable Long id,@RequestBody PersonVO person){
+		person.setId(id);
+		PersonVO newPerson=mapper.map(service.update(id, person), PersonVO.class);
 		return ResponseEntity.ok().body(newPerson);
 		
 	}
